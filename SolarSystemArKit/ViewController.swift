@@ -20,14 +20,39 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the view's delegate
         sceneView.delegate = self
         
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+        //let mySphere = createSphere(radius: 0.1, content: "wall.jpg", vector: SCNVector3(0, 0.2, -1))
+        //let myBox = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)
+
+        let world = createSphere(radius: 0.1, content: "world.png", vector: SCNVector3(0, 0.2, -1))
         
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        let mars = createSphere(radius: 0.2, content: "mars.png", vector: SCNVector3(0.5, 0.2, -1))
         
-        // Set the scene to the view
-        sceneView.scene = scene
+        let venus = createSphere(radius: 0.15, content: "venus.png", vector: SCNVector3(1, 0.2, -1))
+        
+        sceneView.scene.rootNode.addChildNode(world)
+        sceneView.scene.rootNode.addChildNode(mars)
+        sceneView.scene.rootNode.addChildNode(venus)
+        
+        // Objeleri 3 boyutlu daha iyi gösterebilmek için kullanıyorum.
+        sceneView.automaticallyUpdatesLighting = true
+
+    }
+    
+    func createSphere(radius: CGFloat, content: String, vector : SCNVector3) -> SCNNode{
+        
+        let mySphere = SCNSphere(radius: radius)
+        let boxMaterial = SCNMaterial()
+        
+        boxMaterial.diffuse.contents = UIImage(named: "art.scnassets/\(content)")
+        
+        mySphere.materials = [boxMaterial]
+        
+        let node = SCNNode()
+        
+        node.position = vector
+        node.geometry = mySphere
+        
+        return node
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -47,17 +72,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
 
-    // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
-    }
-*/
-    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
